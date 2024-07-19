@@ -13,7 +13,14 @@ def longest_path(graph):
         
         # 隣接する各ノードに対して再帰的に探索
         for neighbor, weight in graph[node].items():
-            if neighbor not in visited:
+            if neighbor in visited and len(path) >= 2 and neighbor != path[-2] and current_length + weight > max_length:
+                # 往復にならない場合、始点と終点が一致することを認め、現在の最大経路長を超えた場合更新する
+                max_length = current_length + weight
+                path.append(neighbor)
+                longest_path = path.copy()
+                path.pop()
+            elif neighbor not in visited:
+                # 深さ優先探索
                 visited.add(neighbor)  # ノードを訪問済みにする
                 path.append(neighbor)  # 経路にノードを追加
                 dfs(neighbor, visited, current_length + weight, path)
@@ -63,8 +70,5 @@ while True:
 
 # 最長経路を出力
 length, path = longest_path(graph)
-# 最後に始点に戻る場合を追加
-if path and path[0] in graph[path[-1]]:
-    path.append(path[0])
 for node in path:
     print(node, end="\r\n")
